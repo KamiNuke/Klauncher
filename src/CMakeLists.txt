@@ -1,0 +1,32 @@
+configure_file(config.h.in config.h @ONLY)
+
+add_executable(${PROJECT_NAME})
+
+ecm_add_qml_module(${PROJECT_NAME}
+        URI
+        uri.klauncher
+)
+
+target_sources(${PROJECT_NAME}
+        PRIVATE
+        main.cpp
+)
+
+ecm_target_qml_sources(${PROJECT_NAME}
+        SOURCES
+        Main.qml
+)
+
+target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        Qt6::Quick
+        Qt6::Qml
+        Qt6::Gui
+        Qt6::QuickControls2
+        Qt6::Widgets
+        KF6::I18n
+        KF6::CoreAddons
+        KF6::IconThemes
+)
+
+install(TARGETS ${PROJECT_NAME} ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
