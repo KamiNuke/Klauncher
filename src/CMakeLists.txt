@@ -1,10 +1,14 @@
 configure_file(config.h.in config.h @ONLY)
 
-add_executable(${PROJECT_NAME})
+add_executable(${PROJECT_NAME}
+        main.cpp
+        klauncher.h
+        klauncher.cpp
+)
 
 ecm_add_qml_module(${PROJECT_NAME}
-        URI
-        uri.klauncher
+        URI uri.klauncher
+        VERSION 0.1
 )
 
 target_sources(${PROJECT_NAME}
@@ -14,7 +18,10 @@ target_sources(${PROJECT_NAME}
 
 ecm_target_qml_sources(${PROJECT_NAME}
         SOURCES
-        Main.qml
+        qml/BaseApp.qml
+        qml/MainPage.qml
+        #qml/DrawerPage.qml
+        qml/AboutPage.qml
 )
 
 target_link_libraries(${PROJECT_NAME}
