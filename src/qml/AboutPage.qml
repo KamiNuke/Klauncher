@@ -1,7 +1,8 @@
-import QtQuick
-import org.kde.kirigami as Kirigami
 import org.kde.kirigamiaddons.formcard as FormCard
+import org.kde.coreaddons
 
 FormCard.AboutPage {
-    title: i18nc("@action:button", "About")
+    aboutData: AboutData
+    getInvolvedUrl: "https://github.com/KamiNuke/Klauncher"
+    donateUrl: "https://github.com/KamiNuke/Klauncher"
 }

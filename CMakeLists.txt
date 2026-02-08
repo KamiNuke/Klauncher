@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 4.1)
-project(klauncher)
+project(klauncher VERSION 0.0.1)
 
-set(APPLICATION_NAME "klauncher")
+set(APPLICATION_NAME "Klauncher")
 set(APPLICATION_DOMAIN "klauncher")
-set(COMPONENT_NAME "klauncher")
+set(DESKTOP_FILE_NAME "com.github.KamiNuke.Klauncher")
 set(ORGANIZATION_NAME "KamiNuke")
-set(ORGANIZATION_DOMAIN "com.github.kaminuke")
+set(ORGANIZATION_DOMAIN "com.github.KamiNuke")
+set(COMPONENT_NAME "klauncher")
 
 # to make lsp work
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

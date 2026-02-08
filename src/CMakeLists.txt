@@ -2,13 +2,21 @@ configure_file(config.h.in config.h @ONLY)
 
 add_executable(${PROJECT_NAME}
         main.cpp
-        klauncher.h
-        klauncher.cpp
+        core/klaunchermanager.h
+        core/klaunchermanager.cpp
+        core/additional.h
+        core/additional.cpp
+        core/klauncherDeclarativePlugin.cpp
+        core/klauncherDeclarativePlugin.h
+        core/processmanager.cpp
+        core/processmanager.h
+        core/appprocess.cpp
+        core/appprocess.h
 )
 
 ecm_add_qml_module(${PROJECT_NAME}
         URI uri.klauncher
-        VERSION 0.1
+        VERSION ${PROJECT_VERSION}
 )
 
 target_sources(${PROJECT_NAME}
@@ -18,10 +26,13 @@ target_sources(${PROJECT_NAME}
 
 ecm_target_qml_sources(${PROJECT_NAME}
         SOURCES
-        qml/BaseApp.qml
-        qml/MainPage.qml
-        #qml/DrawerPage.qml
+        qml/Main.qml
+        qml/DrawerPage.qml
         qml/AboutPage.qml
+        qml/ApplicationPage.qml
+        qml/AddAppDialog.qml
+        qml/AppCard.qml
+        qml/AppSettingsPage.qml
 )
 
 target_link_libraries(${PROJECT_NAME}

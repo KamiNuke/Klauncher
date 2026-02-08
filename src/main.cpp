@@ -9,6 +9,7 @@
 #include <KAboutData>
 
 #include "config.h"
+#include "core/klaunchermanager.h"
 
 int main(int argc, char *argv[])
 {
@@ -16,10 +17,10 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
     KLocalizedString::setApplicationDomain(APPLICATION_DOMAIN);
-    QApplication::setOrganizationName(QStringLiteral(ORGANIZATION_NAME));
+    //QApplication::setOrganizationName(QStringLiteral(ORGANIZATION_NAME));
     QApplication::setOrganizationDomain(QStringLiteral(ORGANIZATION_DOMAIN));
     QApplication::setApplicationName(QStringLiteral(APPLICATION_NAME));
-    QApplication::setDesktopFileName(QStringLiteral(APPLICATION_NAME));
+    QApplication::setDesktopFileName(QStringLiteral(DESKTOP_FILE_NAME));
 
     QApplication::setStyle(QStringLiteral("breeze"));
     if (qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE"))
@@ -32,42 +33,30 @@ int main(int argc, char *argv[])
         // A displayable program name string.
         QStringLiteral(APPLICATION_NAME),
         // The program version string.
-        QStringLiteral("0.1"),
+        QStringLiteral(KLAUNCHER_VERSION_STRING),
         // Short description of what the app does.
-        i18n("GUI for running windows games"),
+        i18n("GUI for running Windows games"),
         // The license this code is released under.
         KAboutLicense::GPL,
         // Copyright Statement.
-        i18n("© 2026 Vaity's team")
+        i18n("Kami Nuke (c) 2026")
     );
 
     aboutData.addAuthor(
-        i18n("Vaity"),
+        i18n("KamiNuke"),
         i18nc("@info:credit", "Developer")
     );
+
+    aboutData.setBugAddress("https://github.com/KamiNuke/Klauncher");
 
     // Set aboutData as information about the app
     KAboutData::setApplicationData(aboutData);
 
-    // Register a singleton that will be accessible from QML.
-    qmlRegisterSingletonType(
-        "uri.klauncher", // How the import statement should look like
-        0, 1, // Major and minor versions of the import
-        "About", // The name of the QML object
-        [](QQmlEngine* engine, QJSEngine *) -> QJSValue {
-            // Here we retrieve our aboutData and give it to the QML engine
-            // to turn it into a QML type
-            return engine->toScriptValue(KAboutData::applicationData());
-        }
-    );
+    //QQmlApplicationEngine engine;
 
-    QQmlApplicationEngine engine;
+    KlauncherManager* klauncherManager = new KlauncherManager();
 
-    engine.rootContext()->setContextObject(new KLocalizedContext(&engine));
-    engine.loadFromModule("uri.klauncher", "BaseApp");
-
-    if (engine.rootObjects().isEmpty())
-        return -1;
+    QObject::connect(&app, &QCoreApplication::aboutToQuit, klauncherManager, &KlauncherManager::deleteLater);
 
     return app.exec();
 }

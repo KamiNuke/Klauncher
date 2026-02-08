@@ -1,43 +1,30 @@
 import QtQuick
-import QtQuick.Layouts
-import QtQuick.Controls as Controls
 import org.kde.kirigami as Kirigami
 
 Kirigami.GlobalDrawer {
     id: drawer
+    isMenu: true
 
-    property bool wideScreen: false
+    signal addRequested()
+    signal aboutRequested()
 
-    maximumSize: Kirigami.Units.gridUnit * 15
+    actions: [
+        Kirigami.Action {
+            text: i18n("Add application")
+            icon.name: "list-add-symbolic"
+            onTriggered: drawer.addRequested()
+        },
 
-    modal: !drawer.wideScreen
-    interactiveResizeEnabled: true
+        Kirigami.Action {
+            text: i18n("About Klauncher")
+            icon.name: "help-about"
+            onTriggered: drawer.aboutRequested()
+        },
 
-    header: Kirigami.AbstractApplicationHeader {
-        Kirigami.Heading {
-            text: i18nc("@title", "Menu")
-            level: 1
-            anchors.centerIn: parent
+        Kirigami.Action {
+            text: i18n("Quit")
+            icon.name: "application-exit-symbolic"
+            onTriggered: Qt.quit()
         }
-    }
-
-
-    footer: ColumnLayout {
-        Kirigami.Separator {
-            Layout.fillWidth: true
-        }
-
-        states: [
-            State {
-                name: "full"
-                when: drawer.wideScreen
-                PropertyChanges { drawer.drawerOpen: true }
-            },
-            State {
-                name: "compact"
-                when: !drawer.wideScreen
-                PropertyChanges { drawer.drawerOpen: false }
-            }
-        ]
-    }
+    ]
 }
