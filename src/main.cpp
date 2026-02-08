@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
         // Short description of what the app does.
         i18n("GUI for running Windows games"),
         // The license this code is released under.
-        KAboutLicense::GPL,
+        KAboutLicense::GPL_V3,
         // Copyright Statement.
         i18n("Kami Nuke (c) 2026")
     );
