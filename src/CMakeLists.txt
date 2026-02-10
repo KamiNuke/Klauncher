@@ -33,6 +33,7 @@ ecm_target_qml_sources(${PROJECT_NAME}
         qml/AddAppDialog.qml
         qml/AppCard.qml
         qml/AppSettingsPage.qml
+        qml/SettingsPage.qml
 )
 
 target_link_libraries(${PROJECT_NAME}

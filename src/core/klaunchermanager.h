@@ -25,6 +25,10 @@ public Q_SLOTS:
     QString extractIcon(const QString& binaryPath);
     QString getRunners();
 
+    QString loadDefaultSettings();
+    void saveDefaultSettings(const QVariantMap& settings);
+    QVariantMap getEffectiveSettings(const QVariantMap& application);
+
 private:
     std::unique_ptr<QQmlApplicationEngine, QScopedPointerDeleteLater> m_engine;
     ProcessManager* m_processManager;

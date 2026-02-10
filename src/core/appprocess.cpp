@@ -4,6 +4,8 @@
 #include <qtimer.h>
 #include <signal.h>
 
+#include "additional.h"
+
 AppProcess::AppProcess(const QVariantMap& application, QObject* parent)
     : QObject(parent), m_application(application)
 {
@@ -27,6 +29,13 @@ void AppProcess::start()
         qWarning() << "App already running:" << getProcessName();
         return;
     }
+
+    QVariantMap effectiveSettings = getSettings(m_application);
+    m_application[QStringLiteral("useMangoHud")] = effectiveSettings.value(QStringLiteral("useMangoHud"));
+    m_application[QStringLiteral("useGameMode")] = effectiveSettings.value(QStringLiteral("useGameMode"));
+    m_application[QStringLiteral("useWayland")] = effectiveSettings.value(QStringLiteral("useWayland"));
+    m_application[QStringLiteral("useDLSSUpgrade")] = effectiveSettings.value(QStringLiteral("useDLSSUpgrade"));
+    m_application[QStringLiteral("useFSRUpgrade")] = effectiveSettings.value(QStringLiteral("useFSRUpgrade"));
 
     setupEnvironment();
 
@@ -84,6 +93,15 @@ void AppProcess::setupEnvironment()
         m_application[QStringLiteral("prefixPath")].toString());
     env.insert(QStringLiteral("PROTONPATH"),
     m_application[QStringLiteral("runnerPath")].toString());
+
+    if (m_application.value(QStringLiteral("useWayland")).toBool())
+        env.insert(QStringLiteral("PROTON_ENABLE_WAYLAND"), QStringLiteral("1"));
+
+    if (m_application.value(QStringLiteral("useDLSSUpgrade")).toBool())
+        env.insert(QStringLiteral("PROTON_DLLS_UPGRADE"), QStringLiteral("1"));
+
+    if (m_application.value(QStringLiteral("useFSRUpgrade")).toBool())
+        env.insert(QStringLiteral("PROTON_FSR4_UPGRADE"), QStringLiteral("1"));
 
     m_process.setProcessEnvironment(env);
 }

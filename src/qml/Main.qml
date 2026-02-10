@@ -23,6 +23,11 @@ Kirigami.ApplicationWindow {
         appSettingsPage.runnerList = runnersResult
     }
 
+    SettingsPage {
+        id: settingsPage
+        window: root
+    }
+
     AppSettingsPage {
         id: appSettingsPage
         window: root
@@ -47,6 +52,9 @@ Kirigami.ApplicationWindow {
             if (root.pageStack.layers.currentItem !== aboutPage) {
                 root.pageStack.layers.push(aboutPage)
             }
+        }
+        onOpenSettings: {
+            settingsPage.open()
         }
     }
 

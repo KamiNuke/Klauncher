@@ -7,12 +7,19 @@ Kirigami.GlobalDrawer {
 
     signal addRequested()
     signal aboutRequested()
+    signal openSettings()
 
     actions: [
         Kirigami.Action {
             text: i18n("Add application")
             icon.name: "list-add-symbolic"
             onTriggered: drawer.addRequested()
+        },
+
+        Kirigami.Action {
+            text: i18n("Settings")
+            icon.name: "settings-configure"
+            onTriggered: drawer.openSettings()
         },
 
         Kirigami.Action {

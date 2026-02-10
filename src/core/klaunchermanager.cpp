@@ -9,7 +9,7 @@
 #include <QDir>
 #include <qeventloop.h>
 #include <QQmlContext>
-#include <regex>
+#include <qurl.h>
 
 #include "additional.h"
 #include "klauncherDeclarativePlugin.h"
@@ -126,6 +126,18 @@ void KlauncherManager::updateApp(const QVariantMap& application)
             jsonObj[QStringLiteral("prefixPath")] = application.value(QStringLiteral("prefixPath")).toString();
             jsonObj[QStringLiteral("runnerPath")] = application.value(QStringLiteral("runnerPath")).toString();
             jsonObj[QStringLiteral("iconPath")] = application.value(QStringLiteral("iconPath")).toString();
+
+            if (application.contains(QStringLiteral("useMangoHud")))
+                jsonObj[QStringLiteral("useMangoHud")] = application.value(QStringLiteral("useMangoHud")).toBool();
+            if (application.contains(QStringLiteral("useGameMode")))
+                jsonObj[QStringLiteral("useGameMode")] = application.value(QStringLiteral("useGameMode")).toBool();
+            if (application.contains(QStringLiteral("useWayland")))
+                jsonObj[QStringLiteral("useWayland")] = application.value(QStringLiteral("useWayland")).toBool();
+            if (application.contains(QStringLiteral("useDLSSUpgrade")))
+                jsonObj[QStringLiteral("useDLSSUpgrade")] = application.value(QStringLiteral("useDLSSUpgrade")).toBool();
+            if (application.contains(QStringLiteral("useFSR4Upgrade")))
+                jsonObj[QStringLiteral("useFSR4Upgrade")] = application.value(QStringLiteral("useFSR4Upgrade")).toBool();
+
 
             jsonArr[i] = jsonObj;
             break;
@@ -291,4 +303,37 @@ QString KlauncherManager::getRunners()
 
     QJsonDocument jsonDoc(runnersArray);
     return QString::fromUtf8(jsonDoc.toJson());
+}
+
+
+
+QString KlauncherManager::loadDefaultSettings()
+{
+    return loadDefSettings();
+}
+
+void KlauncherManager::saveDefaultSettings(const QVariantMap& settings)
+{
+    QString settingsPath = getSettingsLocation();
+
+    QJsonObject jsonObj;
+    jsonObj[QStringLiteral("defaultPrefixesLocation")] = settings.value(QStringLiteral("defaultPrefixesLocation")).toString();
+    jsonObj[QStringLiteral("alwaysCreatePrefix")] = settings.value(QStringLiteral("alwaysCreatePrefix")).toBool();
+    jsonObj[QStringLiteral("useMangoHud")] = settings.value(QStringLiteral("useMangoHud")).toBool();
+    jsonObj[QStringLiteral("useGameMode")] = settings.value(QStringLiteral("useGameMode")).toBool();
+    jsonObj[QStringLiteral("useWayland")] = settings.value(QStringLiteral("useWayland")).toBool();
+    jsonObj[QStringLiteral("useDLSSUpgrade")] = settings.value(QStringLiteral("useDLSSUpgrade")).toBool();
+    jsonObj[QStringLiteral("useFSR4Upgrade")] = settings.value(QStringLiteral("useFSR4Upgrade")).toBool();
+
+    QFile file(settingsPath);
+    if (file.open(QIODevice::WriteOnly))
+    {
+        file.write(QJsonDocument(jsonObj).toJson(QJsonDocument::Indented));
+        file.close();
+    }
+}
+
+QVariantMap KlauncherManager::getEffectiveSettings(const QVariantMap& application)
+{
+    return getSettings(application);
 }
