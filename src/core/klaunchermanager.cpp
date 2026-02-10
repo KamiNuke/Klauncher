@@ -80,10 +80,10 @@ QString KlauncherManager::addApp(const QVariantMap& application)
     }
 
     QJsonObject jsonObj;
-    jsonObj[QStringLiteral("name")] = application.value(QStringLiteral("name")).toString();
-    jsonObj[QStringLiteral("binaryPath")] = application.value(QStringLiteral("binaryPath")).toString();
-    jsonObj[QStringLiteral("prefixPath")] = application.value(QStringLiteral("prefixPath")).toString();
-    jsonObj[QStringLiteral("runnerPath")] = application.value(QStringLiteral("runnerPath")).toString();
+    for (QVariantMap::const_iterator it = application.begin(); it != application.end(); ++it)
+    {
+        jsonObj[it.key()] = QJsonValue::fromVariant(it.value());
+    }
     jsonObj[QStringLiteral("iconPath")] = extractIcon(application.value(QStringLiteral("binaryPath")).toString());
     jsonArr.append(jsonObj);
 
@@ -126,22 +126,11 @@ void KlauncherManager::updateApp(const QVariantMap& application)
         QJsonObject jsonObj = jsonArr[i].toObject();
         if (jsonObj.value(QStringLiteral("name")).toString() == application.value(QStringLiteral("name")).toString())
         {
-            jsonObj[QStringLiteral("binaryPath")] = application.value(QStringLiteral("binaryPath")).toString();
-            jsonObj[QStringLiteral("prefixPath")] = application.value(QStringLiteral("prefixPath")).toString();
-            jsonObj[QStringLiteral("runnerPath")] = application.value(QStringLiteral("runnerPath")).toString();
-            jsonObj[QStringLiteral("iconPath")] = application.value(QStringLiteral("iconPath")).toString();
 
-            if (application.contains(QStringLiteral("useMangoHud")))
-                jsonObj[QStringLiteral("useMangoHud")] = application.value(QStringLiteral("useMangoHud")).toBool();
-            if (application.contains(QStringLiteral("useGameMode")))
-                jsonObj[QStringLiteral("useGameMode")] = application.value(QStringLiteral("useGameMode")).toBool();
-            if (application.contains(QStringLiteral("useWayland")))
-                jsonObj[QStringLiteral("useWayland")] = application.value(QStringLiteral("useWayland")).toBool();
-            if (application.contains(QStringLiteral("useDLSSUpgrade")))
-                jsonObj[QStringLiteral("useDLSSUpgrade")] = application.value(QStringLiteral("useDLSSUpgrade")).toBool();
-            if (application.contains(QStringLiteral("useFSR4Upgrade")))
-                jsonObj[QStringLiteral("useFSR4Upgrade")] = application.value(QStringLiteral("useFSR4Upgrade")).toBool();
-
+            for (QVariantMap::const_iterator it = application.begin(); it != application.end(); ++it)
+            {
+                jsonObj[it.key()] = QJsonValue::fromVariant(it.value());
+            }
 
             jsonArr[i] = jsonObj;
             break;
