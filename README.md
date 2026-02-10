@@ -22,7 +22,7 @@ git clone https://github.com/KamiNuke/Klauncher
 cd klauncher
 cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release --install-prefix /usr
 cmake --build build --parallel
-cmake --install build
+sudo cmake --install build
 ```
 
 #### Arch Linux
