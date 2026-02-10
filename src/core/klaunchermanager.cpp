@@ -7,8 +7,12 @@
 #include <KLocalizedContext>
 #include <KLocalizedString>
 #include <QDir>
+#include <qcontainerfwd.h>
 #include <qeventloop.h>
 #include <QQmlContext>
+#include <qimage.h>
+#include <qjsondocument.h>
+#include <qjsonvalue.h>
 #include <qurl.h>
 
 #include "additional.h"
@@ -305,8 +309,6 @@ QString KlauncherManager::getRunners()
     return QString::fromUtf8(jsonDoc.toJson());
 }
 
-
-
 QString KlauncherManager::loadDefaultSettings()
 {
     return loadDefSettings();
@@ -317,17 +319,20 @@ void KlauncherManager::saveDefaultSettings(const QVariantMap& settings)
     QString settingsPath = getSettingsLocation();
 
     QJsonObject jsonObj;
-    
-    if (!settings.value(QStringLiteral("defaultPrefixesLocation")).toString().isEmpty())
-        jsonObj[QStringLiteral("defaultPrefixesLocation")] = settings.value(QStringLiteral("defaultPrefixesLocation")).toString();
-    jsonObj[QStringLiteral("alwaysCreatePrefix")] = settings.value(QStringLiteral("alwaysCreatePrefix")).toBool();
-    jsonObj[QStringLiteral("useMangoHud")] = settings.value(QStringLiteral("useMangoHud")).toBool();
-    jsonObj[QStringLiteral("useGameMode")] = settings.value(QStringLiteral("useGameMode")).toBool();
-    jsonObj[QStringLiteral("useWayland")] = settings.value(QStringLiteral("useWayland")).toBool();
-    jsonObj[QStringLiteral("useDLSSUpgrade")] = settings.value(QStringLiteral("useDLSSUpgrade")).toBool();
-    jsonObj[QStringLiteral("useFSR4Upgrade")] = settings.value(QStringLiteral("useFSR4Upgrade")).toBool();
-
     QFile file(settingsPath);
+    if (file.open(QIODevice::ReadOnly))
+    {
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(file.readAll()) ;
+        file.close();
+        if (jsonDoc.isObject())
+            jsonObj = jsonDoc.object();
+    }
+
+    for (QVariantMap::const_iterator it = settings.begin(); it != settings.end(); ++it)
+    {
+        jsonObj[it.key()] = QJsonValue::fromVariant(it.value());
+    }
+
     if (file.open(QIODevice::WriteOnly))
     {
         file.write(QJsonDocument(jsonObj).toJson(QJsonDocument::Indented));
