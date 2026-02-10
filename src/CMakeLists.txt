@@ -12,6 +12,8 @@ add_executable(${PROJECT_NAME}
         core/processmanager.h
         core/appprocess.cpp
         core/appprocess.h
+        core/ProcessManager2.cpp
+        core/ProcessManager2.h
 )
 
 ecm_add_qml_module(${PROJECT_NAME}
@@ -19,9 +21,9 @@ ecm_add_qml_module(${PROJECT_NAME}
         VERSION ${PROJECT_VERSION}
 )
 
-target_sources(${PROJECT_NAME}
-        PRIVATE
-        main.cpp
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/core
 )
 
 ecm_target_qml_sources(${PROJECT_NAME}

@@ -7,9 +7,52 @@
 #include <KLocalizedString>
 #include <KIconTheme>
 #include <KAboutData>
+#include <QCommandLineParser>
+#include <qapplication.h>
+#include <qcommandlineoption.h>
+#include <qcoreapplication.h>
+#include <qfileinfo.h>
 
 #include "config.h"
-#include "core/klaunchermanager.h"
+#include "klaunchermanager.h"
+
+#include "ProcessManager2.h"
+
+void handleParser(int argc, QApplication& app)
+{
+    QCommandLineParser parser;
+    parser.setApplicationDescription(QStringLiteral("Run app in a default prefix"));
+    parser.addHelpOption();
+    parser.addVersionOption();
+    parser.addPositionalArgument(
+        QStringLiteral("/path/to/binary.exe"),
+        QStringLiteral("Path to the Windows binary to run with Proton")
+    );
+
+    parser.process(app);
+
+    const QStringList args = parser.positionalArguments();
+    if (!args.isEmpty())
+    {
+        QString binaryPath = args.first();
+       
+        QFileInfo file(binaryPath);
+
+        if (!file.exists())
+        {
+            qCritical() << "Error: File does not exist:" << binaryPath;
+            parser.showHelp(1);
+            return;
+        }
+        else if (!file.isFile())
+        {
+            qCritical() << "Error: Path is to a directory, not a file" << binaryPath;
+            parser.showHelp(1);
+            return;
+        }
+    }
+
+}
 
 int main(int argc, char *argv[])
 {
@@ -22,9 +65,16 @@ int main(int argc, char *argv[])
     QApplication::setApplicationName(QStringLiteral(APPLICATION_NAME));
     QApplication::setDesktopFileName(QStringLiteral(DESKTOP_FILE_NAME));
 
+    if (argc > 1)
+    {
+        handleParser(argc, app);
+        return 1;
+    }
+
     QApplication::setStyle(QStringLiteral("breeze"));
     if (qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE"))
         QQuickStyle::setStyle(QStringLiteral("org.kde.desktop"));
+
 
     KAboutData aboutData
     (

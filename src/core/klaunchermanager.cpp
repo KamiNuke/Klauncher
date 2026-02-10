@@ -317,7 +317,9 @@ void KlauncherManager::saveDefaultSettings(const QVariantMap& settings)
     QString settingsPath = getSettingsLocation();
 
     QJsonObject jsonObj;
-    jsonObj[QStringLiteral("defaultPrefixesLocation")] = settings.value(QStringLiteral("defaultPrefixesLocation")).toString();
+    
+    if (!settings.value(QStringLiteral("defaultPrefixesLocation")).toString().isEmpty())
+        jsonObj[QStringLiteral("defaultPrefixesLocation")] = settings.value(QStringLiteral("defaultPrefixesLocation")).toString();
     jsonObj[QStringLiteral("alwaysCreatePrefix")] = settings.value(QStringLiteral("alwaysCreatePrefix")).toBool();
     jsonObj[QStringLiteral("useMangoHud")] = settings.value(QStringLiteral("useMangoHud")).toBool();
     jsonObj[QStringLiteral("useGameMode")] = settings.value(QStringLiteral("useGameMode")).toBool();

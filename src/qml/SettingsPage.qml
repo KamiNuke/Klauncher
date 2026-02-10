@@ -40,7 +40,7 @@ KirigamiSettings.ConfigurationView {
 
             Component.onCompleted: {
                 var settings = JSON.parse(klauncherManager.loadDefaultSettings())
-                 defaultPrefixesLocationDelegate.text = settings.defaultPrefixesLocation
+                 defaultPrefixesLocationDelegate.currentFolder = settings.defaultPrefixesLocation
                 alwaysCreatePrefix.checked = settings.alwaysCreatePrefix
             }
 
@@ -61,7 +61,6 @@ KirigamiSettings.ConfigurationView {
                     id: defaultPrefixesLocationDelegate
                     label: "Default prefixes location" 
                     //description: i18n("Defines where Proton store configuration files")
-                    currentFolder: appPreference.application.binaryPath
                     onAccepted: mainPageRoot.saveSettings()
                 }
 
