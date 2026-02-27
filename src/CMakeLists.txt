@@ -6,14 +6,10 @@ add_executable(${PROJECT_NAME}
         core/klaunchermanager.cpp
         core/additional.h
         core/additional.cpp
-        core/klauncherDeclarativePlugin.cpp
-        core/klauncherDeclarativePlugin.h
         core/processmanager.cpp
         core/processmanager.h
         core/appprocess.cpp
         core/appprocess.h
-        core/ProcessManager2.cpp
-        core/ProcessManager2.h
 )
 
 ecm_add_qml_module(${PROJECT_NAME}

@@ -16,7 +16,7 @@
 #include <qurl.h>
 
 #include "additional.h"
-#include "klauncherDeclarativePlugin.h"
+
 
 KlauncherManager::KlauncherManager()
     : m_engine(new QQmlApplicationEngine),
@@ -24,12 +24,6 @@ KlauncherManager::KlauncherManager()
 {
     setObjectName("klauncherManager");
     m_engine->rootContext()->setContextObject(new KLocalizedContext(m_engine.get()));
-
-    auto uri = "uri.klauncher";
-    KlauncherDeclarativePlugin* plugin = new KlauncherDeclarativePlugin;
-    plugin->setParent(this);
-    plugin->initializeEngine(m_engine.get(), uri);
-    plugin->registerTypes(uri);
 
     m_engine->rootContext()->setContextProperty(QStringLiteral("klauncherManager"), this);
     m_engine->rootContext()->setContextProperty(QStringLiteral("processManager"), m_processManager);
