@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=Klauncher
+Name=klauncher
 Exec=klauncher %F
 Icon=klauncher
 MimeType=application/x-ms-dos-executable;application/x-msi;application/x-ms-shortcut;application/x-bat;application/x-mswinurl

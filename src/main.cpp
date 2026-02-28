@@ -8,6 +8,7 @@
 #include <QCommandLineParser>
 #include <QCommandLineOption>
 #include <QCoreApplication>
+#include <QIcon>
 
 #include "config.h"
 #include "File.h"
@@ -68,6 +69,7 @@ int main(int argc, char *argv[])
     KIconTheme::initTheme();
 
     QApplication app(argc, argv);
+    app.setWindowIcon(QIcon::fromTheme(QStringLiteral("klauncher")));
     KLocalizedString::setApplicationDomain(APPLICATION_DOMAIN);
     //QApplication::setOrganizationName(QStringLiteral(ORGANIZATION_NAME));
     QApplication::setOrganizationDomain(QStringLiteral(ORGANIZATION_DOMAIN));
