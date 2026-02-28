@@ -17,7 +17,7 @@ BuildRequires:  kf6-kirigami-devel
 BuildRequires:  kf6-kcoreaddons-devel
 BuildRequires:  kf6-ki18n-devel
 BuildRequires:  kf6-kiconthemes-devel
-#BuildRequires:  kf6-qqc2-desktop-style-devel
+BuildRequires:  kf6-qqc2-desktop-style
 BuildRequires:  kf6-kirigami-addons-devel
 Requires:       qt6-qtbase
 Requires:       kf6-kirigami
