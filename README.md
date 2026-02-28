@@ -10,14 +10,21 @@ A Qt/Kirigami proton launcher for linux
 
 ### Installation
 
-#### Requirements
-
-- Dependencies
+#### Build Dependencies
 
 Arch Linux
 ```
-sudo pacman -S --needed base-devel extra-cmake-modules cmake kirigami kirigami-addons ki18n kcoreaddons breeze kiconthemes qt6-base qt6-declarative qqc2-desktop-style umu-launcher icoutils
+sudo pacman -S --needed base-devel extra-cmake-modules cmake kirigami kirigami-addons ki18n kcoreaddons breeze kiconthemes qt6-base qt6-declarative qqc2-desktop-style
 ```
+
+Fedora Linux
+```
+sudo dnf install @development-tools @development-libs cmake extra-cmake-modules kf6-kirigami2-devel kf6-ki18n-devel kf6-kcoreaddons-devel kf6-kiconthemes-devel qt6-qtbase-devel qt6-qtdeclarative-devel qt6-qtquickcontrols2-devel kf6-qqc2-desktop-style cmake ninja kf6-kirigami-addons-devel
+```
+
+#### Runtime Dependencies
+
+`` umu-launcher icoutils ``
 
 #### Any distro
 if you want to install it to ~/.local change /usr to ~/.local
