@@ -16,7 +16,7 @@ A Qt/Kirigami proton launcher for linux
 
 Arch Linux
 ```
-sudo pacman -S --neede base-devel extra-cmake-modules cmake kirigami kirigami-addons ki18n kcoreaddons breeze kiconthemes qt6-base qt6-declarative qqc2-desktop-style umu-launcher icoutils
+sudo pacman -S --needed base-devel extra-cmake-modules cmake kirigami kirigami-addons ki18n kcoreaddons breeze kiconthemes qt6-base qt6-declarative qqc2-desktop-style umu-launcher icoutils
 ```
 
 #### Any distro
