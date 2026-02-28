@@ -15,12 +15,12 @@ Kirigami.ApplicationWindow {
     minimumHeight: 200
 
     function refresh() {
-        var appResult = klauncherManager.loadApps();
-        applicationPage.appList = JSON.parse(appResult);
-
         var runnersResult = JSON.parse(klauncherManager.getRunners());
         addDialog.runnerList = runnersResult
         appSettingsPage.runnerList = runnersResult
+
+        var appResult = klauncherManager.loadApps();
+        applicationPage.appList = JSON.parse(appResult);
     }
 
     SettingsPage {
@@ -75,10 +75,10 @@ Kirigami.ApplicationWindow {
             addDialog.open()
         }
         onStartRequested : function (application) {
-            processManager.start(application)
+            klauncherManager.startApp(application)
         }
         onStopRequested : function (application) {
-            processManager.stop(application)
+            klauncherManager.stopApp(application)
         }
         onSettingsRequested : function (application) {
             appSettingsPage.application = application

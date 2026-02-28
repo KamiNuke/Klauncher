@@ -63,16 +63,16 @@ KirigamiSettings.ConfigurationView {
                     onAccepted: {
                         appPreference.application.binaryPath = selectedFile.toString().replace("file://", "")
                         changeRequested(appPreference.application)
-                    } 
+                    }
                 }
 
                 FormCard.FormFolderDelegate {
                     label: "Path to prefix"
-                    currentFolder: appPreference.application.prefixPath
+                    currentFolder: appPreference.application.env.WINEPREFIX
                     onAccepted: {
-                        appPreference.application.prefixPath = currentFolder.toString().replace("file://", "")
+                        appPreference.application.env.WINEPREFIX = currentFolder.toString().replace("file://", "")
                         changeRequested(appPreference.application)
-                    } 
+                    }
                 }
 
                 FormCard.FormComboBoxDelegate {
@@ -85,18 +85,18 @@ KirigamiSettings.ConfigurationView {
 
                     currentIndex: {
                         for (let i = 0; i < appPreference.runnerList.length; ++i) {
-                            if(appPreference.runnerList[i].path === appPreference.application.runnerPath) {
+                            if(appPreference.runnerList[i].path === appPreference.application.env.PROTONPATH) {
                                 return i;
                             }
                         }
                         return -1;
                     }
 
-                    property string selectedRunnerPath: ""
                     onActivated: idx => {
                         if (idx >= 0 && idx < appPreference.runnerList.length) {
-                            selectedRunnerPath = appPreference.runnerList[idx].path
-                            appPreference.application.runnerPath = selectedRunnerPath
+                            if (!appPreference.application.env)
+                                appPreference.application.env = {}
+                            appPreference.application.env.PROTONPATH = appPreference.runnerList[idx].path
                             changeRequested(appPreference.application)
                         }
                     }
@@ -112,14 +112,18 @@ KirigamiSettings.ConfigurationView {
             function saveSettings() {
                 appPreference.application.useMangoHud = mangohudSwitch.checked
                 appPreference.application.useGameMode = gamemodeSwitch.checked
-                appPreference.application.useWayland = waylandSwitch.checked
-                appPreference.application.useDLSSUpgrade = dlssUpgradeSwitch.checked
-                appPreference.application.useFSR4Upgrade = fsr4UpgradeSwitch.checked
+                if (!appPreference.application.env)
+                    appPreference.application.env = {}
+                appPreference.application.env.PROTON_ENABLE_WAYLAND = waylandSwitch.checked ? 1 : 0
+                appPreference.application.env.PROTON_DLLS_UPGRADE = dlssUpgradeSwitch.checked ? 1 : 0
+                appPreference.application.env.PROTON_FSR4_UPGRADE = fsr4UpgradeSwitch.checked ? 1 : 0
                 changeRequested(appPreference.application)
             }
 
             Component.onCompleted: {
                 var defaults = JSON.parse(klauncherManager.loadDefaultSettings())
+                var env = appPreference.application.env ?? {}
+                var defEnv = defaults.env ?? {}
 
                 mangohudSwitch.checked = appPreference.application.useMangoHud !== undefined
                     ? appPreference.application.useMangoHud
@@ -129,17 +133,17 @@ KirigamiSettings.ConfigurationView {
                     ? appPreference.application.useGameMode
                     : defaults.useGameMode
 
-                waylandSwitch.checked = appPreference.application.useWayland !== undefined
-                    ? appPreference.application.useWayland
-                    : defaults.useWayland
+                waylandSwitch.checked = env.PROTON_ENABLE_WAYLAND !== undefined
+                    ? env.PROTON_ENABLE_WAYLAND === 1
+                    : defEnv.PROTON_ENABLE_WAYLAND === 1
 
-                dlssUpgradeSwitch.checked = appPreference.application.useDLSSUpgrade !== undefined
-                    ? appPreference.application.useDLSSUpgrade
-                    : defaults.useDLSSUpgrade
+                dlssUpgradeSwitch.checked = env.PROTON_DLLS_UPGRADE !== undefined
+                    ? env.PROTON_DLLS_UPGRADE === 1
+                    : defEnv.PROTON_DLLS_UPGRADE === 1
 
-                fsr4UpgradeSwitch.checked = appPreference.application.useFSR4Upgrade !== undefined
-                    ? appPreference.application.useFSR4Upgrade
-                    : defaults.useFSR4Upgrade
+                fsr4UpgradeSwitch.checked = env.PROTON_FSR4_UPGRADE !== undefined
+                    ? env.PROTON_FSR4_UPGRADE === 1
+                    : defEnv.PROTON_FSR4_UPGRADE === 1
             }
 
 

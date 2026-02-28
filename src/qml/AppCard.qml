@@ -41,7 +41,7 @@ Kirigami.AbstractCard {
 
                 Controls.Button {
                     id: runButton
-                    property bool isRunning: processManager.isRunning(card.application)
+                    property bool isRunning: klauncherManager.isAppRunning(card.application.name)
                     text: isRunning ? i18n("Stop") : i18n("Start")
                     onClicked: {
                         if(!isRunning) {
@@ -49,12 +49,18 @@ Kirigami.AbstractCard {
                         } else {
                             card.stopRequested(card.application)
                         }
-                        isRunning = processManager.isRunning(card.application)
                     }
+
                     Connections {
-                        target: processManager
-                        function onStarted() { runButton.isRunning = processManager.isRunning(card.application) }
-                        function onStopped() { runButton.isRunning = processManager.isRunning(card.application) }
+                        target: klauncherManager
+                        function onAppStarted(name) {
+                            if (name === card.application.name)
+                                runButton.isRunning = true
+                        }
+                        function onAppStopped(name) {
+                            if (name === card.application.name)
+                                runButton.isRunning = false
+                        }
                     }
                 }
 

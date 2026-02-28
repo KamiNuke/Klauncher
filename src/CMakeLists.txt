@@ -4,12 +4,12 @@ add_executable(${PROJECT_NAME}
         main.cpp
         core/klaunchermanager.h
         core/klaunchermanager.cpp
-        core/additional.h
-        core/additional.cpp
-        core/processmanager.cpp
-        core/processmanager.h
-        core/appprocess.cpp
-        core/appprocess.h
+        core/Process.cpp
+        core/Process.h
+        core/File.cpp
+        core/File.h
+        core/Dir.cpp
+        core/Dir.h
 )
 
 ecm_add_qml_module(${PROJECT_NAME}

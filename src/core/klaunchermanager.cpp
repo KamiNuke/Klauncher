@@ -7,27 +7,25 @@
 #include <KLocalizedContext>
 #include <KLocalizedString>
 #include <QDir>
-#include <qcontainerfwd.h>
-#include <qeventloop.h>
+#include <QtContainerFwd>
+#include <QEventLoop>
 #include <QQmlContext>
-#include <qimage.h>
-#include <qjsondocument.h>
-#include <qjsonvalue.h>
-#include <qurl.h>
+#include <QImage>
+#include <QJsonDocument>
+#include <QJsonValue>
 
-#include "additional.h"
+#include "Dir.h"
+#include "File.h"
 
 
-KlauncherManager::KlauncherManager()
-    : m_engine(new QQmlApplicationEngine),
-        m_processManager(new ProcessManager(this))
+KlauncherManager::KlauncherManager(QAnyStringView typeName)
+    : m_engine(new QQmlApplicationEngine)
 {
     setObjectName("klauncherManager");
     m_engine->rootContext()->setContextObject(new KLocalizedContext(m_engine.get()));
 
     m_engine->rootContext()->setContextProperty(QStringLiteral("klauncherManager"), this);
-    m_engine->rootContext()->setContextProperty(QStringLiteral("processManager"), m_processManager);
-    m_engine->loadFromModule("uri.klauncher", "Main");
+    m_engine->loadFromModule("uri.klauncher", typeName);
 }
 
 KlauncherManager::~KlauncherManager()
@@ -41,7 +39,7 @@ KlauncherManager::~KlauncherManager()
 
 QString KlauncherManager::addApp(const QVariantMap& application)
 {
-    QString applicationDataPath = getAppListLocation();
+    QString applicationDataPath = Klauncher::File::getApplicationListFile();
 
     QJsonArray jsonArr;
     QFile file(applicationDataPath);
@@ -91,14 +89,14 @@ QString KlauncherManager::addApp(const QVariantMap& application)
     file.write(jsonDoc.toJson(QJsonDocument::Indented));
     file.close();
 
-    qDebug() << getIconsLocation();
+    qDebug() << Klauncher::Dir::getIconsLocation();
 
     return QStringLiteral("Created successfully");
 }
 
 void KlauncherManager::updateApp(const QVariantMap& application)
 {
-    QString applicationDataPath = getAppListLocation();
+    QString applicationDataPath = Klauncher::File::getApplicationListFile();
 
     QJsonArray jsonArr;
     QFile file(applicationDataPath);
@@ -141,7 +139,7 @@ void KlauncherManager::updateApp(const QVariantMap& application)
 
 void KlauncherManager::removeApp(const QVariantMap& application)
 {
-    QString applicationDataPath = getAppListLocation();
+    QString applicationDataPath = Klauncher::File::getApplicationListFile();
 
     QJsonArray jsonArr;
     QFile file(applicationDataPath);
@@ -183,12 +181,12 @@ void KlauncherManager::removeApp(const QVariantMap& application)
     file.write(jsonDoc.toJson(QJsonDocument::Indented));
     file.close();
 
-    removeIcon(application.value(QStringLiteral("iconPath")).toString());
+    Klauncher::File::removeIcon(application.value(QStringLiteral("iconPath")).toString());
 }
 
 QString KlauncherManager::loadApps()
 {
-    QString applicationDataPath = getAppListLocation();
+    QString applicationDataPath = Klauncher::File::getApplicationListFile();
 
     QFile file(applicationDataPath);
     if (!file.open(QIODevice::ReadOnly))
@@ -225,7 +223,7 @@ QString KlauncherManager::extractIcon(const QString& binaryPath)
     QFileInfo fileInfo(binaryPath);
     QString binaryFileName = fileInfo.completeBaseName();
 
-    QString iconOutputPath = getIconsLocation() + QStringLiteral("/") + binaryFileName + QStringLiteral(".ico");
+    QString iconOutputPath = Klauncher::Dir::getIconsLocation() + QStringLiteral("/") + binaryFileName + QStringLiteral(".ico");
 
     QStringList arguments;
     arguments << QStringLiteral("-x")
@@ -254,7 +252,7 @@ QString KlauncherManager::getRunners()
 
     QStringList searchPaths = {
         QStringLiteral("/usr/share/steam/compatibilitytools.d/"),
-        getHomeDirectory() + QStringLiteral("/.local/share/Steam/compatibilitytools.d/"),
+        Klauncher::Dir::getHomeDirectory() + QStringLiteral("/.local/share/Steam/compatibilitytools.d/"),
     };
 
     for (const auto& path : searchPaths)
@@ -294,12 +292,13 @@ QString KlauncherManager::getRunners()
 
 QString KlauncherManager::loadDefaultSettings()
 {
-    return loadDefSettings();
+    const QVariantMap settings = Klauncher::File::loadDefaultSettings();
+    return QString::fromUtf8(QJsonDocument(QJsonObject::fromVariantMap(settings)).toJson());
 }
 
 void KlauncherManager::saveDefaultSettings(const QVariantMap& settings)
 {
-    QString settingsPath = getSettingsLocation();
+    QString settingsPath = Klauncher::File::getDefaultSettingsFile();
 
     QJsonObject jsonObj;
     QFile file(settingsPath);
@@ -325,5 +324,50 @@ void KlauncherManager::saveDefaultSettings(const QVariantMap& settings)
 
 QVariantMap KlauncherManager::getEffectiveSettings(const QVariantMap& application)
 {
-    return getSettings(application);
+    return Klauncher::File::getSettings(application);
+}
+
+void KlauncherManager::startApp(const QVariantMap& application)
+{
+    const QString name = application[QStringLiteral("name")].toString();
+
+    if (m_processes.contains(name))
+        return;
+
+    Klauncher::Process* process = new Klauncher::Process(this, application);
+
+    connect(process, &Klauncher::Process::finished, this,
+        [this, name, process](int exitCode, QProcess::ExitStatus exitStatus)
+        {
+            m_processes.remove(name);
+            Q_EMIT appStopped(name);
+            process->deleteLater();
+        });
+
+    connect(process, &Klauncher::Process::errorOccurred, this,
+        [this, name, process](QProcess::ProcessError error)
+        {
+            m_processes.remove(name);
+            Q_EMIT appStopped(name);
+            process->deleteLater();
+        });
+
+    m_processes.insert(name, process);
+    process->start();
+    Q_EMIT appStarted(name);
+}
+
+void KlauncherManager::stopApp(const QVariantMap& application)
+{
+    const QString name = application[QStringLiteral("name")].toString();
+
+    if (!m_processes.contains(name))
+        return;
+
+    m_processes[name]->stop();
+}
+
+bool KlauncherManager::isAppRunning(const QString& name)
+{
+    return m_processes.contains(name);
 }

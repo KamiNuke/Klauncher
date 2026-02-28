@@ -29,10 +29,10 @@ KirigamiSettings.ConfigurationView {
     readonly property Component mainPage: Component {
        FormCard.FormCardPage {
             id: mainPageRoot
-            
+
             function saveSettings() {
                 var settings = {
-                    "defaultPrefixesLocation":  defaultPrefixesLocationDelegate.currentFolder.toString().replace("file://", ""),
+                    "prefixesLocation": defaultPrefixesLocationDelegate.currentFolder.toString().replace("file://", ""),
                     "alwaysCreatePrefix": alwaysCreatePrefix.checked
                 }
                 klauncherManager.saveDefaultSettings(settings)
@@ -40,7 +40,7 @@ KirigamiSettings.ConfigurationView {
 
             Component.onCompleted: {
                 var settings = JSON.parse(klauncherManager.loadDefaultSettings())
-                 defaultPrefixesLocationDelegate.currentFolder = settings.defaultPrefixesLocation
+                defaultPrefixesLocationDelegate.currentFolder = settings.prefixesLocation
                 alwaysCreatePrefix.checked = settings.alwaysCreatePrefix
             }
 
@@ -59,7 +59,7 @@ KirigamiSettings.ConfigurationView {
 
                 FormCard.FormFolderDelegate {
                     id: defaultPrefixesLocationDelegate
-                    label: "Default prefixes location" 
+                    label: "Default prefixes location"
                     //description: i18n("Defines where Proton store configuration files")
                     onAccepted: mainPageRoot.saveSettings()
                 }
@@ -71,9 +71,9 @@ KirigamiSettings.ConfigurationView {
                     onToggled: mainPageRoot.saveSettings()
                 }
             }
-        
+
         }
-    }    
+    }
 
     readonly property Component optionsPage: Component {
         FormCard.FormCardPage {
@@ -82,9 +82,11 @@ KirigamiSettings.ConfigurationView {
                 var settings = {
                     "useMangoHud": mangohudSwitch.checked,
                     "useGameMode": gamemodeSwitch.checked,
-                    "useWayland": waylandSwitch.checked,
-                    "useDLSSUpgrade": dlssUpgradeSwitch.checked,
-                    "useFSR4Upgrade": fsr4UpgradeSwitch.checked
+                    "env": {
+                        "PROTON_ENABLE_WAYLAND": waylandSwitch.checked,
+                        "PROTON_DLLS_UPGRADE": dlssUpgradeSwitch.checked,
+                        "PROTON_FSR4_UPGRADE": fsr4UpgradeSwitch.checked
+                    }
                 }
                 klauncherManager.saveDefaultSettings(settings)
             }
@@ -92,9 +94,9 @@ KirigamiSettings.ConfigurationView {
                 var settings = JSON.parse(klauncherManager.loadDefaultSettings())
                 mangohudSwitch.checked = settings.useMangoHud
                 gamemodeSwitch.checked = settings.useGameMode
-                waylandSwitch.checked = settings.useWayland
-                dlssUpgradeSwitch.checked = settings.useDLSSUpgrade
-                fsr4UpgradeSwitch.checked = settings.useFSR4Upgrade
+                waylandSwitch.checked = settings.env.PROTON_ENABLE_WAYLAND
+                dlssUpgradeSwitch.checked = settings.env.PROTON_DLLS_UPGRADE
+                fsr4UpgradeSwitch.checked = settings.env.PROTON_FSR4_UPGRADE
             }
 
             FormCard.FormCard {
@@ -146,5 +148,5 @@ KirigamiSettings.ConfigurationView {
                 }
             }
         }
-    } 
+    }
 }

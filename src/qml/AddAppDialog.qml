@@ -61,13 +61,15 @@ Kirigami.Dialog {
     }
 
     function add() {
-        let application = ({
+        let application = {
             "name": addDialog.appName,
             "binaryPath": addDialog.binaryPath,
-            "prefixPath": addDialog.prefixPath,
-            "runnerPath": runnerComboBox.selectedRunnerPath
-        })
-        addDialog.addAppRequested(application);
+            "env": {
+                "WINEPREFIX": addDialog.prefixPath,
+                "PROTONPATH": runnerComboBox.selectedRunnerPath
+            }
+        }
+        addDialog.addAppRequested(application)
         addDialog.close()
     }
 
