@@ -1,8 +1,12 @@
 # Klauncher
 A Qt/Kirigami proton launcher for linux
 
-### Disclaimer
-Currently, code in an insanely bad state, many things don't make any sense nor work properly, so I wouldn't recommend using it for now. However, in theory, it should work, and be compatible with future versions(Not sure yet)
+### Screenshots
+![](./screenshots/mainMenu.png)
+![](./screenshots/addDialog.png)
+![](./screenshots/appSettings.png)
+![](./screenshots/options.png)
+![](./screenshots/settingsPage.png)
 
 ### Installation
 
@@ -10,8 +14,9 @@ Currently, code in an insanely bad state, many things don't make any sense nor w
 
 - Dependencies
 
+Arch Linux
 ```
-base-devel extra-cmake-modules cmake kirigami kirigami-addons ki18n kcoreaddons breeze kiconthemes qt6-base qt6-declarative qqc2-desktop-style
+sudo pacman -S --neede base-devel extra-cmake-modules cmake kirigami kirigami-addons ki18n kcoreaddons breeze kiconthemes qt6-base qt6-declarative qqc2-desktop-style umu-launcher icoutils
 ```
 
 #### Any distro
