@@ -1,57 +1,66 @@
 #include <QApplication>
-#include <QQmlApplicationEngine>
 #include <QtQml>
-#include <QUrl>
 #include <QQuickStyle>
 #include <KLocalizedContext>
 #include <KLocalizedString>
 #include <KIconTheme>
 #include <KAboutData>
 #include <QCommandLineParser>
-#include <qapplication.h>
-#include <qcommandlineoption.h>
-#include <qcoreapplication.h>
-#include <qfileinfo.h>
+#include <QCommandLineOption>
+#include <QCoreApplication>
 
 #include "config.h"
+#include "File.h"
 #include "klaunchermanager.h"
+#include "Process.h"
 
-#include "ProcessManager2.h"
-
-void handleParser(int argc, QApplication& app)
+int parseAndLaunch(const QApplication& app)
 {
     QCommandLineParser parser;
     parser.setApplicationDescription(QStringLiteral("Run app in a default prefix"));
     parser.addHelpOption();
     parser.addVersionOption();
     parser.addPositionalArgument(
-        QStringLiteral("/path/to/binary.exe"),
+        QStringLiteral("binary"),
         QStringLiteral("Path to the Windows binary to run with Proton")
     );
 
     parser.process(app);
 
     const QStringList args = parser.positionalArguments();
-    if (!args.isEmpty())
+    if (args.isEmpty())
     {
-        QString binaryPath = args.first();
-       
-        QFileInfo file(binaryPath);
-
-        if (!file.exists())
-        {
-            qCritical() << "Error: File does not exist:" << binaryPath;
-            parser.showHelp(1);
-            return;
-        }
-        else if (!file.isFile())
-        {
-            qCritical() << "Error: Path is to a directory, not a file" << binaryPath;
-            parser.showHelp(1);
-            return;
-        }
+        qCritical() << "Error: No binary path provided";
+        parser.showHelp(-1);
     }
 
+    const QString binaryPath = args.first();
+    if (!QFile::exists(binaryPath))
+    {
+        qCritical() << "Error: File does not exist:" << binaryPath;
+        return -1;
+    }
+
+    QVariantMap appInfo = Klauncher::File::loadDefaultSettings();
+    appInfo[QStringLiteral("binaryPath")] = binaryPath;
+
+    Klauncher::Process* process = new Klauncher::Process(nullptr, appInfo);
+
+    QObject::connect(process, &Klauncher::Process::finished,
+        &app, [&app](int exitCode, QProcess::ExitStatus)
+        {
+            app.exit(exitCode);
+        });
+
+    QObject::connect(process, &Klauncher::Process::errorOccurred,
+        &app, [&app](QProcess::ProcessError error)
+        {
+            qCritical() << "Process error:" << error;
+            app.exit(-1);
+        });
+
+    process->start();
+    return app.exec();
 }
 
 int main(int argc, char *argv[])
@@ -67,14 +76,12 @@ int main(int argc, char *argv[])
 
     if (argc > 1)
     {
-        handleParser(argc, app);
-        return 1;
+        return parseAndLaunch(app);
     }
 
     QApplication::setStyle(QStringLiteral("breeze"));
     if (qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE"))
         QQuickStyle::setStyle(QStringLiteral("org.kde.desktop"));
-
 
     KAboutData aboutData
     (
@@ -104,7 +111,7 @@ int main(int argc, char *argv[])
 
     //QQmlApplicationEngine engine;
 
-    KlauncherManager* klauncherManager = new KlauncherManager();
+    KlauncherManager* klauncherManager = new KlauncherManager("Main");
 
     QObject::connect(&app, &QCoreApplication::aboutToQuit, klauncherManager, &KlauncherManager::deleteLater);
 
