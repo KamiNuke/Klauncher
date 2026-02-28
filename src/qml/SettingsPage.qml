@@ -30,17 +30,10 @@ KirigamiSettings.ConfigurationView {
        FormCard.FormCardPage {
             id: mainPageRoot
 
-            function saveSettings() {
-                var settings = {
-                    "prefixesLocation": defaultPrefixesLocationDelegate.currentFolder.toString().replace("file://", ""),
-                    "alwaysCreatePrefix": alwaysCreatePrefix.checked
-                }
-                klauncherManager.saveDefaultSettings(settings)
-            }
-
             Component.onCompleted: {
                 var settings = JSON.parse(klauncherManager.loadDefaultSettings())
                 defaultPrefixesLocationDelegate.currentFolder = settings.prefixesLocation
+                defaultPrefixDelegate.currentFolder = settings.env.WINEPREFIX
                 alwaysCreatePrefix.checked = settings.alwaysCreatePrefix
             }
 
@@ -54,21 +47,75 @@ KirigamiSettings.ConfigurationView {
 
                 FormCard.FormDelegateSeparator {
                     above: header
-                    below: defaultPrefixesLocationDelegate
+                    below: defaultPrefixDelegate
+                }
+
+                FormCard.FormFolderDelegate {
+                    id: defaultPrefixDelegate
+                    label: i18n("Default prefix")
+                    currentFolder: {
+                        var settings = JSON.parse(klauncherManager.loadDefaultSettings())
+                        return settings.env.WINEPREFIX
+                    }
+                    onAccepted: {
+                        klauncherManager.saveDefaultSettings({
+                            "env": { "WINEPREFIX": currentFolder.toString().replace("file://", "") }
+                        })
+                    }
+                }
+
+                FormCard.FormComboBoxDelegate {
+                    id: runnerVersion
+                    text: i18n("Proton")
+                    displayMode: FormCard.FormComboBoxDelegate.ComboBox
+                    model: appPreference.runnerList
+                    textRole: "name"
+
+                    currentIndex: {
+                        var settings = JSON.parse(klauncherManager.loadDefaultSettings())
+                        for (let i = 0; i < appPreference.runnerList.length; ++i) {
+                            if (appPreference.runnerList[i].path === settings.env.PROTONPATH)
+                                return i
+                        }
+                        return -1
+                    }
+
+                    onActivated: idx => {
+                        if (idx >= 0 && idx < appPreference.runnerList.length) {
+                            klauncherManager.saveDefaultSettings({
+                                "env": { "PROTONPATH": appPreference.runnerList[idx].path }
+                            })
+                        }
+                    }
                 }
 
                 FormCard.FormFolderDelegate {
                     id: defaultPrefixesLocationDelegate
-                    label: "Default prefixes location"
-                    //description: i18n("Defines where Proton store configuration files")
-                    onAccepted: mainPageRoot.saveSettings()
+                    label: i18n("Default prefixes location")
+                    currentFolder: {
+                        var settings = JSON.parse(klauncherManager.loadDefaultSettings())
+                        return settings.prefixesLocation
+                    }
+                    onAccepted: {
+                        klauncherManager.saveDefaultSettings({
+                            "prefixesLocation": currentFolder.toString().replace("file://", "")
+                        })
+                    }
                 }
 
                 FormCard.FormSwitchDelegate {
                     id: alwaysCreatePrefix
                     text: i18n("Use default prefix by default")
-                    description: i18n("Creates Default/ prefix in prefixes location and uses it for every app unless told otherwise")
-                    onToggled: mainPageRoot.saveSettings()
+                    description: i18n("DOESN'T WORK AS FOR NOW")
+                    checked: {
+                        var settings = JSON.parse(klauncherManager.loadDefaultSettings())
+                        return settings.alwaysCreatePrefix ?? false
+                    }
+                    onToggled: {
+                        klauncherManager.saveDefaultSettings({
+                            "alwaysCreatePrefix": checked
+                        })
+                    }
                 }
             }
 

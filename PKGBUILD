@@ -15,6 +15,7 @@ depends=(
     "kio"
     "qqc2-desktop-style"
     "umu-launcher"
+    "icoutils"
 )
 
 optdepends=(

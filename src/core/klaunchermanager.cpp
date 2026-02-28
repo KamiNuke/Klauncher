@@ -298,28 +298,28 @@ QString KlauncherManager::loadDefaultSettings()
 
 void KlauncherManager::saveDefaultSettings(const QVariantMap& settings)
 {
-    QString settingsPath = Klauncher::File::getDefaultSettingsFile();
+    QVariantMap current = Klauncher::File::loadDefaultSettings();
 
-    QJsonObject jsonObj;
-    QFile file(settingsPath);
-    if (file.open(QIODevice::ReadOnly))
+    for (auto it = settings.constBegin(); it != settings.constEnd(); ++it)
     {
-        QJsonDocument jsonDoc = QJsonDocument::fromJson(file.readAll()) ;
-        file.close();
-        if (jsonDoc.isObject())
-            jsonObj = jsonDoc.object();
+        if (it.key() == QStringLiteral("env"))
+        {
+            QVariantMap currentEnv = current[QStringLiteral("env")].toMap();
+            const QVariantMap newEnv = it.value().toMap();
+
+            for (auto envIt = newEnv.constBegin(); envIt != newEnv.constEnd(); ++envIt)
+                currentEnv[envIt.key()] = envIt.value();
+
+            current[QStringLiteral("env")] = currentEnv;
+        }
+        else
+        {
+            current[it.key()] = it.value();
+        }
     }
 
-    for (QVariantMap::const_iterator it = settings.begin(); it != settings.end(); ++it)
-    {
-        jsonObj[it.key()] = QJsonValue::fromVariant(it.value());
-    }
+    Klauncher::File::saveJson(current, Klauncher::File::getDefaultSettingsFile());
 
-    if (file.open(QIODevice::WriteOnly))
-    {
-        file.write(QJsonDocument(jsonObj).toJson(QJsonDocument::Indented));
-        file.close();
-    }
 }
 
 QVariantMap KlauncherManager::getEffectiveSettings(const QVariantMap& application)

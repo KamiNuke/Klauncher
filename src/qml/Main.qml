@@ -18,6 +18,7 @@ Kirigami.ApplicationWindow {
         var runnersResult = JSON.parse(klauncherManager.getRunners());
         addDialog.runnerList = runnersResult
         appSettingsPage.runnerList = runnersResult
+        settingsPage.runnerList = runnersResult
 
         var appResult = klauncherManager.loadApps();
         applicationPage.appList = JSON.parse(appResult);
