@@ -13,6 +13,7 @@
 #include <QImage>
 #include <QJsonDocument>
 #include <QJsonValue>
+#include <QStandardPaths>
 
 #include "Dir.h"
 #include "File.h"
@@ -218,7 +219,8 @@ QString KlauncherManager::loadApps()
 QString KlauncherManager::extractIcon(const QString& binaryPath)
 {
     QProcess process;
-    const QString program = QStringLiteral("/usr/bin/wrestool");
+    //const QString program = QStringLiteral("/usr/bin/wrestool");
+    const QString program = QStandardPaths::findExecutable(QStringLiteral("wrestool"));
 
     QFileInfo fileInfo(binaryPath);
     QString binaryFileName = fileInfo.completeBaseName();
@@ -241,6 +243,7 @@ QString KlauncherManager::extractIcon(const QString& binaryPath)
         QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
         &loop, &QEventLoop::quit);
 
+    process.setProcessChannelMode(QProcess::ForwardedChannels);
     process.start();
     loop.exec();
     return iconOutputPath;

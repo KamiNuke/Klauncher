@@ -7,6 +7,7 @@
 #include <QJsonObject>
 #include <QTimer>
 #include <QJsonValue>
+#include <QStandardPaths>
 
 #include "File.h"
 
@@ -42,7 +43,7 @@ namespace Klauncher
 
         setupEnvironment();
 
-        QString program = QStringLiteral("/usr/bin/umu-run");
+        QString program = QStandardPaths::findExecutable(QStringLiteral("umu-run"));
         QStringList args;
 
         bool useMangohud = m_appInfo[QStringLiteral("useMangoHud")].toBool();
@@ -97,7 +98,7 @@ namespace Klauncher
         qInfo() << Q_FUNC_INFO;
 
         QProcess pkillProcess;
-        pkillProcess.start(QStringLiteral("pkill"), {QStringLiteral("-f"),
+        pkillProcess.start(QStandardPaths::findExecutable(QStringLiteral("pkill")), {QStringLiteral("-f"),
             m_appInfo[QStringLiteral("binaryPath")].toString()});
         pkillProcess.waitForFinished(2000);
     }
