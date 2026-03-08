@@ -90,6 +90,8 @@ namespace Klauncher
         for (auto it = appEnv.constBegin(); it != appEnv.constEnd(); ++it)
             env.insert(it.key(), it.value().toString());
 
+        qInfo() << env.toStringList();
+
         m_process.setProcessEnvironment(env);
     }
 

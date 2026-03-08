@@ -130,9 +130,10 @@ KirigamiSettings.ConfigurationView {
                     "useMangoHud": mangohudSwitch.checked,
                     "useGameMode": gamemodeSwitch.checked,
                     "env": {
-                        "PROTON_ENABLE_WAYLAND": waylandSwitch.checked,
-                        "PROTON_DLLS_UPGRADE": dlssUpgradeSwitch.checked,
-                        "PROTON_FSR4_UPGRADE": fsr4UpgradeSwitch.checked
+                        "PROTON_ENABLE_WAYLAND": +waylandSwitch.checked,
+                        "PROTON_DLLS_UPGRADE": +dlssUpgradeSwitch.checked,
+                        "PROTON_FSR4_UPGRADE": +fsr4UpgradeSwitch.checked,
+                        "WAYLANDDRV_SSD": +windowDecorationSwitch.checked
                     }
                 }
                 klauncherManager.saveDefaultSettings(settings)
@@ -144,6 +145,7 @@ KirigamiSettings.ConfigurationView {
                 waylandSwitch.checked = settings.env.PROTON_ENABLE_WAYLAND
                 dlssUpgradeSwitch.checked = settings.env.PROTON_DLLS_UPGRADE
                 fsr4UpgradeSwitch.checked = settings.env.PROTON_FSR4_UPGRADE
+                windowDecorationSwitch.checked = settings.env.WAYLANDDRV_SSD
             }
 
             FormCard.FormCard {
@@ -191,6 +193,13 @@ KirigamiSettings.ConfigurationView {
                     id: fsr4UpgradeSwitch
                     text: i18n("Enable FSR upgrade")
                     description: i18n("Downloads and uses newest FSR4 version")
+                    onToggled: optionPageRoot.saveSettings()
+                }
+                
+                FormCard.FormSwitchDelegate {
+                    id: windowDecorationSwitch
+                    text: i18n("Enable server-side decoration (Proton-EM Only)")
+                    description: i18n("Experimental: shows DE window frame instead of wine one on wayland")
                     onToggled: optionPageRoot.saveSettings()
                 }
             }

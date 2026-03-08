@@ -17,7 +17,8 @@ namespace Klauncher
             QVariantMap env;
             env[QStringLiteral("PROTON_DLLS_UPGRADE")] = 1;
             env[QStringLiteral("PROTON_FSR4_UPGRADE")] = 0;
-            env[QStringLiteral("PROTON_ENABLE_WAYLAND")] = 1;
+            env[QStringLiteral("PROTON_ENABLE_WAYLAND")] = 1;  
+            env[QStringLiteral("WAYLANDDRV_SSD")] = 0;
             env[QStringLiteral("PROTONPATH")] = QString(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)
                 + QStringLiteral("/.local/share/Steam/steamapps/common/Proton - Experimental"));
             env[QStringLiteral("WINEPREFIX")] = QString(Dir::getDataPath()
@@ -109,4 +110,4 @@ namespace Klauncher
         return effectiveSettings;
 
     }
-} // Klauncher
+} // Klaunchr

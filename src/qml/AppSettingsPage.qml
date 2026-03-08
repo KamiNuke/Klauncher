@@ -114,9 +114,11 @@ KirigamiSettings.ConfigurationView {
                 appPreference.application.useGameMode = gamemodeSwitch.checked
                 if (!appPreference.application.env)
                     appPreference.application.env = {}
-                appPreference.application.env.PROTON_ENABLE_WAYLAND = waylandSwitch.checked ? 1 : 0
-                appPreference.application.env.PROTON_DLLS_UPGRADE = dlssUpgradeSwitch.checked ? 1 : 0
-                appPreference.application.env.PROTON_FSR4_UPGRADE = fsr4UpgradeSwitch.checked ? 1 : 0
+                appPreference.application.env.PROTON_ENABLE_WAYLAND = +waylandSwitch.checked
+                appPreference.application.env.PROTON_DLLS_UPGRADE = +dlssUpgradeSwitch.checked
+                appPreference.application.env.PROTON_FSR4_UPGRADE = +fsr4UpgradeSwitch.checked
+                appPreference.application.env.WAYLANDDRV_SSD = +windowDecorationSwitch.checked
+
                 changeRequested(appPreference.application)
             }
 
@@ -144,7 +146,11 @@ KirigamiSettings.ConfigurationView {
                 fsr4UpgradeSwitch.checked = env.PROTON_FSR4_UPGRADE !== undefined
                     ? env.PROTON_FSR4_UPGRADE === 1
                     : defEnv.PROTON_FSR4_UPGRADE === 1
-            }
+    
+                windowDecorationSwitch.checked = env.WAYLANDDRV_SSD !== undefined
+                    ? env.WAYLANDDRV_SSD === 1
+                    : defEnv.WAYLANDDRV_SSD === 1
+                }
 
 
             FormCard.FormCard {
@@ -182,6 +188,13 @@ KirigamiSettings.ConfigurationView {
                     id: fsr4UpgradeSwitch
                     text: i18n("Enable FSR4 upgrade")
                     description: i18n("Downloads and uses newest FSR4 version")
+                    onToggled: optionPageRoot.saveSettings()
+                }
+
+                FormCard.FormSwitchDelegate {
+                    id: windowDecorationSwitch
+                    text: i18n("Enable server-side decoration (Proton-EM Only)")
+                    description: i18n("Experimental: shows DE window frame instead of wine one on wayland")
                     onToggled: optionPageRoot.saveSettings()
                 }
             }
