@@ -117,6 +117,24 @@ KirigamiSettings.ConfigurationView {
                         })
                     }
                 }
+
+                FormCard.FormSwitchDelegate {
+                    id: wow64Switch
+                    text: i18n("Enable WOW64")
+                    description: i18n("EXPERIMENTAL: Uses 64bit wine prefix")
+
+                    checked: {
+                        var settings = JSON.parse(klauncherManager.loadDefaultSettings())
+                        return settings.env.PROTON_USE_WOW64 ?? false
+                    }
+
+                    onToggled: {
+                        klauncherManager.saveDefaultSettings({
+                            "env": { "PROTON_USE_WOW64": +checked }
+                        })
+                    }
+                }
+
             }
 
         }

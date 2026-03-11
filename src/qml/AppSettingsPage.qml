@@ -101,6 +101,19 @@ KirigamiSettings.ConfigurationView {
                         }
                     }
                 }
+
+                FormCard.FormSwitchDelegate {
+                    id: wow64Switch
+                    text: i18n("Enable WOW64")
+                    description: i18n("EXPERIMENTAL: Uses 64bit wine prefix")
+
+                    checked: appPreference.application.env.PROTON_USE_WOW64 ?? false
+
+                    onToggled: {
+                        appPreference.application.env.PROTON_USE_WOW64 = +checked
+                        changeRequested(appPreference.application) 
+                    }
+                }
             }
         }
     }
