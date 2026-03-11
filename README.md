@@ -44,3 +44,7 @@ wget https://raw.githubusercontent.com/KamiNuke/Klauncher/refs/heads/main/PKGBUI
 makepkg -si
 ```
 
+### FAQ
+> How to redirect output from a terminal to a file?
+
+```PROTON_LOG=1 klauncher name.exe 2>&1 | tee log.txt```
