@@ -87,11 +87,6 @@ namespace Klauncher
         QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
         const QVariantMap appEnv = m_appInfo.value(QStringLiteral("env")).toMap();
 
-        for (auto it = appEnv.constBegin(); it != appEnv.constEnd(); ++it)
-            env.insert(it.key(), it.value().toString());
-
-        qInfo() << env.toStringList();
-
         m_process.setProcessEnvironment(env);
     }
 
