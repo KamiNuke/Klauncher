@@ -102,6 +102,17 @@ KirigamiSettings.ConfigurationView {
                     }
                 }
 
+                FormCard.FormTextFieldDelegate {
+                    id: argsField
+                    label: i18n("Application arguments")
+                    text: application.args.join(" ")
+
+                    onEditingFinished: {
+                        appPreference.application.args = text.trim().split(/\s+/)
+                        changeRequested(appPreference.application)
+                    }
+                }
+
                 FormCard.FormSwitchDelegate {
                     id: wow64Switch
                     text: i18n("Enable WOW64")

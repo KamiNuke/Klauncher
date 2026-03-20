@@ -25,6 +25,15 @@ int parseAndLaunch(const QApplication& app)
         QStringLiteral("binary"),
         QStringLiteral("Path to the Windows binary to run with Proton")
     );
+    parser.addPositionalArgument(
+        QStringLiteral("args"),
+        QStringLiteral("Extra arguments for the binary"),
+        QStringLiteral("[args...]")
+    );
+
+    parser.setOptionsAfterPositionalArgumentsMode(
+        QCommandLineParser::ParseAsPositionalArguments
+    );
 
     parser.process(app);
 
@@ -35,15 +44,19 @@ int parseAndLaunch(const QApplication& app)
         parser.showHelp(-1);
     }
 
-    const QString binaryPath = args.first();
+    const QString& binaryPath = args.first();
     if (!QFile::exists(binaryPath))
     {
         qCritical() << "Error: File does not exist:" << binaryPath;
         return -1;
     }
 
+    constexpr qsizetype appArgsPos = 1;
+    const QStringList appArgs = args.mid(appArgsPos);
+
     QVariantMap appInfo = Klauncher::File::loadDefaultSettings();
     appInfo[QStringLiteral("binaryPath")] = binaryPath;
+    appInfo[QStringLiteral("args")] = appArgs;
 
     Klauncher::Process* process = new Klauncher::Process(nullptr, appInfo);
 

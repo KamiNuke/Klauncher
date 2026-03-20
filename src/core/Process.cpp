@@ -58,6 +58,7 @@ namespace Klauncher
         }
 
         args << m_appInfo[QStringLiteral("binaryPath")].toString();
+        args << m_appInfo[QStringLiteral("args")].toStringList();
 
         m_process.setProgram(program);
         m_process.setArguments(args);
