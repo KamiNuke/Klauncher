@@ -105,7 +105,7 @@ KirigamiSettings.ConfigurationView {
                 FormCard.FormTextFieldDelegate {
                     id: argsField
                     label: i18n("Application arguments")
-                    text: application.args.join(" ")
+                    text: (application.args ?? []).join(" ")
 
                     onEditingFinished: {
                         appPreference.application.args = text.trim().split(/\s+/)
