@@ -57,8 +57,14 @@ namespace Klauncher
             program = QStringLiteral("gamemoderun");
         }
 
-        args << m_appInfo[QStringLiteral("binaryPath")].toString();
+        QString binaryPath(m_appInfo[QStringLiteral("binaryPath")].toString());
+
+        args << binaryPath;
         args << m_appInfo[QStringLiteral("args")].toStringList();
+
+        // Required to fix crashes for some app (e.g. dark soul II with mods)
+        // Allow user to change it later and set working directory be default to binary
+        m_process.setWorkingDirectory(QFileInfo(binaryPath).absolutePath());
 
         m_process.setProgram(program);
         m_process.setArguments(args);
