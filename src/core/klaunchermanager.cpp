@@ -58,25 +58,23 @@ QString KlauncherManager::addApp(const QVariantMap& application)
         }
     }
 
-    const auto it = std::ranges::find_if(jsonArr, [&application](const QJsonValue& value)
     {
-        if (value.isObject())
+        const auto it = std::ranges::find_if(jsonArr, [&application](const QJsonValue& value)
         {
-            return value.toObject().value(QStringLiteral("name")).toString() == application.value(QStringLiteral("name")).toString();
+            if (value.isObject())
+            {
+                return value.toObject().value(QStringLiteral("name")).toString() == application.value(QStringLiteral("name")).toString();
+            }
+            return false;
+        });
+
+        if (it != jsonArr.end())
+        {
+            return QStringLiteral("Value already exist");
         }
-        return false;
-    });
-
-    if (it != jsonArr.end())
-    {
-        return QStringLiteral("Value already exist");
     }
 
-    QJsonObject jsonObj;
-    for (QVariantMap::const_iterator it = application.begin(); it != application.end(); ++it)
-    {
-        jsonObj[it.key()] = QJsonValue::fromVariant(it.value());
-    }
+    QJsonObject jsonObj = QJsonObject::fromVariantMap(Klauncher::File::getSettings(application));
     jsonObj[QStringLiteral("iconPath")] = extractIcon(application.value(QStringLiteral("binaryPath")).toString());
     jsonArr.append(jsonObj);
 
