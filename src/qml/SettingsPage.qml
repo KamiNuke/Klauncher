@@ -151,7 +151,8 @@ KirigamiSettings.ConfigurationView {
                         "PROTON_ENABLE_WAYLAND": +waylandSwitch.checked,
                         "PROTON_DLLS_UPGRADE": +dlssUpgradeSwitch.checked,
                         "PROTON_FSR4_UPGRADE": +fsr4UpgradeSwitch.checked,
-                        "WAYLANDDRV_SSD": +windowDecorationSwitch.checked
+                        "WAYLANDDRV_SSD": +windowDecorationSwitch.checked,
+                        "PROTON_USE_SDL": +useSDLSwitch.checked
                     }
                 }
                 klauncherManager.saveDefaultSettings(settings)
@@ -164,6 +165,7 @@ KirigamiSettings.ConfigurationView {
                 dlssUpgradeSwitch.checked = settings.env.PROTON_DLLS_UPGRADE
                 fsr4UpgradeSwitch.checked = settings.env.PROTON_FSR4_UPGRADE
                 windowDecorationSwitch.checked = settings.env.WAYLANDDRV_SSD
+                useSDLSwitch.checked = settings.env.PROTON_USE_SDL
             }
 
             FormCard.FormCard {
@@ -218,6 +220,13 @@ KirigamiSettings.ConfigurationView {
                     id: windowDecorationSwitch
                     text: i18n("Enable server-side decoration for wayland")
                     description: i18n("Experimental: shows native window frame instead of wine one")
+                    onToggled: optionPageRoot.saveSettings()
+                }
+
+                FormCard.FormSwitchDelegate {
+                    id: useSDLSwitch
+                    text: i18n("Enable SDL input instead of HIDRAW/Steam Input.")
+                    description: i18n("May fix controller issues in certain games")
                     onToggled: optionPageRoot.saveSettings()
                 }
             }

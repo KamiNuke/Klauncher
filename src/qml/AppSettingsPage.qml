@@ -142,6 +142,7 @@ KirigamiSettings.ConfigurationView {
                 appPreference.application.env.PROTON_DLLS_UPGRADE = +dlssUpgradeSwitch.checked
                 appPreference.application.env.PROTON_FSR4_UPGRADE = +fsr4UpgradeSwitch.checked
                 appPreference.application.env.WAYLANDDRV_SSD = +windowDecorationSwitch.checked
+                appPreference.application.env.PROTON_USE_SDL = +useSDLSwitch.checked
 
                 changeRequested(appPreference.application)
             }
@@ -174,6 +175,10 @@ KirigamiSettings.ConfigurationView {
                 windowDecorationSwitch.checked = env.WAYLANDDRV_SSD !== undefined
                     ? env.WAYLANDDRV_SSD === 1
                     : defEnv.WAYLANDDRV_SSD === 1
+
+                useSDLSwitch.checked = env.PROTON_USE_SDL !== undefined
+                    ? env.PROTON_USE_SDL === 1
+                    : defEnv.PROTON_USE_SDL === 1
                 }
 
 
@@ -219,6 +224,13 @@ KirigamiSettings.ConfigurationView {
                     id: windowDecorationSwitch
                     text: i18n("Enable server-side decoration (Proton-EM Only)")
                     description: i18n("Experimental: shows DE window frame instead of wine one on wayland")
+                    onToggled: optionPageRoot.saveSettings()
+                }
+
+                FormCard.FormSwitchDelegate {
+                    id: useSDLSwitch
+                    text: i18n("Enable SDL input instead of HIDRAW/Steam Input.")
+                    description: i18n("May fix controller issues in certain games")
                     onToggled: optionPageRoot.saveSettings()
                 }
             }
