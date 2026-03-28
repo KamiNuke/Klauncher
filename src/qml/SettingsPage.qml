@@ -216,8 +216,8 @@ KirigamiSettings.ConfigurationView {
                 
                 FormCard.FormSwitchDelegate {
                     id: windowDecorationSwitch
-                    text: i18n("Enable server-side decoration (Proton-EM Only)")
-                    description: i18n("Experimental: shows DE window frame instead of wine one on wayland")
+                    text: i18n("Enable server-side decoration for wayland")
+                    description: i18n("Experimental: shows native window frame instead of wine one")
                     onToggled: optionPageRoot.saveSettings()
                 }
             }
